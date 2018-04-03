@@ -95,9 +95,26 @@ public class UserGUI extends javax.swing.JFrame {
             FileImport fi = new FileImport(path);
             try {
                 String[] fileContents = fi.openFile();
-                for (int i = 0; i < fileContents.length; i++) {
-                    System.out.println(fileContents[i]);
+                String currentMatch = "";
+                int nodeCount = 0;
+                for (int i = 0; i< fileContents.length; i++){
+                    String[] tempArr = fileContents[i].split("\\s+");
+                    if(!currentMatch.equals(tempArr[0]));
+                    {
+                        nodeCount++;
+                    }
+                    currentMatch = tempArr[0];
                 }
+                GraphGenerator gg = new GraphGenerator(nodeCount);
+                gg.initializeNodeArray();
+                for (int i = 0; i < fileContents.length; i++) {
+                    String[] tempArr = fileContents[i].split("\\s+");
+                    gg.setNodeConnection(Integer.parseInt(tempArr[0]), Integer.parseInt(tempArr[1]), Integer.parseInt(tempArr[2]));
+                    //System.out.println(fileContents[i]);
+                }
+                System.out.println("Completed node import and construction of graph.");
+                gg.parseAllNodes();
+                gg.printParsedNodes();
             } catch (IOException e) {
                 System.out.println(e.getMessage());
             }
@@ -106,33 +123,31 @@ public class UserGUI extends javax.swing.JFrame {
 
     private void btn_generateGraphActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_generateGraphActionPerformed
         int numberOfNodes = 0;
-        try{
+        try {
             numberOfNodes = Integer.parseInt(this.tf_numNodes.getText());
+        } catch (Exception e) {
+
         }
-        catch(Exception e){
-            
-        }
-        if(numberOfNodes > 0)
-        {
-        
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
-        FileNameExtensionFilter filter = new FileNameExtensionFilter(
-    "TXT", ".txt");
-        int result = fileChooser.showSaveDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            String path = fileChooser.getSelectedFile().getAbsolutePath();
-            GraphGenerator gg = new GraphGenerator(numberOfNodes, path);
-            gg.generateNodes();
-            gg.parseAllNodes();
-            try {
-                gg.saveParsedNodes();
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(UserGUI.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (UnsupportedEncodingException ex) {
-                Logger.getLogger(UserGUI.class.getName()).log(Level.SEVERE, null, ex);
+        if (numberOfNodes > 0) {
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+            FileNameExtensionFilter filter = new FileNameExtensionFilter(
+                    "TXT", ".txt");
+            int result = fileChooser.showSaveDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                String path = fileChooser.getSelectedFile().getAbsolutePath();
+                GraphGenerator gg = new GraphGenerator(numberOfNodes, path);
+                gg.generateRandomNodes();
+                gg.parseAllNodes();
+                try {
+                    gg.saveParsedNodes();
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(UserGUI.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (UnsupportedEncodingException ex) {
+                    Logger.getLogger(UserGUI.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
-        }
         }
 
     }//GEN-LAST:event_btn_generateGraphActionPerformed

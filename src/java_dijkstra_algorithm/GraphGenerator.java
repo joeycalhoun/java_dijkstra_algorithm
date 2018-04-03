@@ -24,6 +24,12 @@ public class GraphGenerator {
     Random rng = new Random();
     String file_path;
 
+    public GraphGenerator(int num_nodes){
+        this.num_nodes = num_nodes;
+        this.graph = new Node[num_nodes];
+        this.textGraph = new String[num_nodes * num_nodes];
+    }
+    
     public GraphGenerator(int num_nodes, String file_path) {
         this.num_nodes = num_nodes;
         this.graph = new Node[num_nodes];
@@ -41,16 +47,25 @@ public class GraphGenerator {
             this.file_path = path+".txt";
         }
     }
-    public void generateNodes() {
+    
+    public void initializeNodeArray(){
         for (int i = 0; i < graph.length; i++) {
             graph[i] = new Node(i, num_nodes);
         }
+    }
+    
+    public void setNodeConnection(int nodeID, int connection, int connectionWeight){
+        graph[nodeID].setConnection(connection, connectionWeight);
+    }
+    
+    public void generateRandomNodes() {
+        initializeNodeArray();
         for (int i = 0; i < graph.length; i++) {
-            generateSingleNode(i);
+            generateSingleRandomNode(i);
         }
     }
-
-    public void generateSingleNode(int nodeID) {
+    
+    public void generateSingleRandomNode(int nodeID) {
         int maxConnections = num_nodes / 4;
         int numConnections = checkConnections(graph[nodeID]);
         if (numConnections < maxConnections) {
@@ -118,10 +133,10 @@ public class GraphGenerator {
                     writer.println(textGraph[i]);
                 }
             }
-            for(int i = 0; i<graph.length; i++)
-            {
-                writer.println("Node "+i+" has "+checkConnections(graph[i])+" connections.");
-            }
+//            for(int i = 0; i<graph.length; i++)
+//            {
+//                writer.println("Node "+i+" has "+checkConnections(graph[i])+" connections.");
+//            }
         }
         System.out.println("Complete.");
     }
